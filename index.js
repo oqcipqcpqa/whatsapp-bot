@@ -10,9 +10,11 @@ const client = new Client({
 });
 
 client.on('qr', qr => {
-  console.log("Escanea este código QR con WhatsApp:");
-  qrcode.generate(qr, { small: true });
+  const qrLink = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qr)}&size=300x300`;
+  console.log("🔒 Escanea este código QR con WhatsApp desde este link:");
+  console.log(qrLink);
 });
+
 
 client.on('ready', () => {
   console.log('✅ Bot conectado y listo');
