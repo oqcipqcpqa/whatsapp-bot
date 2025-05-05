@@ -6,7 +6,11 @@ const app = express();
 app.use(express.json());
 
 const client = new Client({
-  authStrategy: new LocalAuth()
+  authStrategy: new LocalAuth(),
+  puppeteer: {
+    headless: true, // Puedes poner 'false' si quieres ver el navegador
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  }
 });
 
 client.on('qr', qr => {
@@ -15,12 +19,10 @@ client.on('qr', qr => {
   console.log(qrLink);
 });
 
-
 client.on('ready', () => {
   console.log('✅ Bot conectado y listo');
 });
 
-// Webhook desde AppSheet
 app.post('/enviar-grupo', async (req, res) => {
   const { nombreGrupo, mensaje } = req.body;
 
@@ -30,13 +32,13 @@ app.post('/enviar-grupo', async (req, res) => {
 
     if (grupo) {
       await grupo.sendMessage(mensaje);
-      res.send('Mensaje enviado al grupo');
+      res.send('✅ Mensaje enviado al grupo');
     } else {
-      res.status(404).send('Grupo no encontrado');
+      res.status(404).send('❌ Grupo no encontrado');
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error al enviar el mensaje');
+    res.status(500).send('⚠️ Error al enviar el mensaje');
   }
 });
 
